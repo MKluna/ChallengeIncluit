@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Animals = require("../models/animals");
 
+const validTypeOfAnimal = ["NOVILLO", "TORO", "VAQUILLONA"];
+const validDeviceType = ["COLLAR", "CARAVANA"]
+
 /* Path returning all animals in the database */
 router.get("/", async (req, res) => {
   try {
@@ -50,6 +53,18 @@ router.post("/", async (req, res) => {
 
   try {
 
+    if (!validTypeOfAnimal.includes(typeOfAnimal.toUpperCase())) {
+      return res.status(400).json({
+        message: "The type of animal is not valid",
+      });
+    }
+
+    if (!validDeviceType.includes(deviceType.toUpperCase())) {
+      return res.status(400).json({
+        message: "The device type is not valid",
+      });
+    }
+
     if (!idSenasa) {
       return res.status(500).json({
         message: "SENASA ID is mandatory.",
@@ -92,8 +107,14 @@ router.post("/", async (req, res) => {
 
 /* Path to update an animal by SENASA ID */
 router.put("/:id", async (req, res) => {
-  const { typeOfAnimal, animalWeight, pastureName, deviceType, deviceNumber, idSenasa } =
-    req.body;
+  const {
+    typeOfAnimal,
+    animalWeight,
+    pastureName,
+    deviceType,
+    deviceNumber,
+    idSenasa,
+  } = req.body;
 
   const newAnimal = {
     idSenasa,
@@ -107,6 +128,19 @@ router.put("/:id", async (req, res) => {
   const filter = { idSenasa: req.params.id };
 
   try {
+
+    if (!validTypeOfAnimal.includes(typeOfAnimal.toUpperCase())) {
+      return res.status(400).json({
+        message: "The type of animal is not valid",
+      });
+    }
+
+    if (!validDeviceType.includes(deviceType.toUpperCase())) {
+      return res.status(400).json({
+        message: "The device type is not valid",
+      });
+    }
+
     const animalFound = await Animals.findOne(filter);
     if (!animalFound) {
       return res
